@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HR Workflow Designer — Case Study Solution Document</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --ink:     #0f1117;
+    --ink-2:   #1a1d27;
+    --ink-3:   #21252f;
+    --border:  #2e3347;
+    --accent:  #6366f1;
+    --accent2: #818cf8;
+    --text:    #e2e4ed;
+    --muted:   #8b8fa8;
+    --green:   #22c55e;
+    --amber:   #f59e0b;
+    --rose:    #f43f5e;
+    --blue:    #3b82f6;
+    --purple:  #a855f7;
+    --sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ────────────────────────────────────── */
+  .page { max-width: 960px; margin: 0 auto; padding: 0 32px 80px; }
+
+  /* ── Cover ─────────────────────────────────────── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cover-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    background: rgba(99,102,241,.12);
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 100px;
+    padding: 5px 14px;
+    width: fit-content;
+    margin-bottom: 32px;
+  }
+  .cover-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+  .cover h1 {
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+  .cover h1 span { color: var(--accent2); }
+  .cover-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 600px;
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    max-width: 680px;
+  }
+  .meta-card {
+    background: var(--ink-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .meta-card .label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+  .meta-card .value { font-size: 14px; font-weight: 600; color: #fff; }
+
+  /* ── ToC ────────────────────────────────────────── */
+  .toc {
+    background: var(--ink-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin: 48px 0;
+  }
+  .toc h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 20px; }
+  .toc ol { counter-reset: toc; padding: 0; list-style: none; }
+  .toc li {
+    counter-increment: toc;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(46,51,71,.6);
+    font-size: 14px;
+  }
+  .toc li:last-child { border-bottom: none; }
+  .toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent2);
+    font-family: var(--mono);
+    min-width: 24px;
+  }
+  .toc a { color: var(--text); text-decoration: none; }
+  .toc a:hover { color: var(--accent2); }
+  .toc .page-ref { margin-left: auto; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+
+  /* ── Sections ───────────────────────────────────── */
+  section { padding-top: 72px; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+  h2.section-title {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #fff;
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+  .section-intro { color: var(--muted); font-size: 15px; max-width: 680px; margin-bottom: 40px; }
+
+  h3 { font-size: 18px; font-weight: 700; color: #fff; margin: 40px 0 14px; }
+  h4 { font-size: 14px; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: .08em; margin: 28px 0 10px; }
+
+  p { color: #c4c8db; margin-bottom: 16px; }
+
+  /* ── Divider ────────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  /* ── Diagram box ────────────────────────────────── */
+  .diagram-wrap {
+    background: var(--ink-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin: 28px 0;
+    overflow: auto;
+  }
+  .diagram-caption {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+    font-style: italic;
+  }
+
+  /* ── Mermaid overrides ──────────────────────────── */
+  .mermaid { display: flex; justify-content: center; }
+
+  /* ── Callout ─────────────────────────────────────── */
+  .callout {
+    display: flex;
+    gap: 16px;
+    padding: 18px 22px;
+    border-radius: 12px;
+    margin: 24px 0;
+    border: 1px solid;
+  }
+  .callout.info  { background: rgba(99,102,241,.08); border-color: rgba(99,102,241,.3); }
+  .callout.warn  { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); }
+  .callout.good  { background: rgba(34,197,94,.08);  border-color: rgba(34,197,94,.3); }
+  .callout-icon  { font-size: 20px; line-height: 1; flex-shrink: 0; padding-top: 2px; }
+  .callout-body p { margin: 0; font-size: 14px; }
+  .callout-body strong { color: #fff; }
+
+  /* ── Code block ──────────────────────────────────── */
+  pre {
+    background: #0a0c12;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.65;
+    color: #a5f3c4;
+  }
+  code { font-family: var(--mono); font-size: 13px; background: rgba(99,102,241,.12); color: var(--accent2); padding: 2px 7px; border-radius: 5px; }
+  pre code { background: none; color: inherit; padding: 0; }
+
+  /* ── Table ───────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  th {
+    background: var(--ink-3);
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 700;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(46,51,71,.5);
+    color: #c4c8db;
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(99,102,241,.04); }
+
+  /* ── Pill badges ─────────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid;
+  }
+  .pill-green  { background: rgba(34,197,94,.12);   border-color: rgba(34,197,94,.4);   color: #4ade80; }
+  .pill-blue   { background: rgba(59,130,246,.12);  border-color: rgba(59,130,246,.4);  color: #60a5fa; }
+  .pill-amber  { background: rgba(245,158,11,.12);  border-color: rgba(245,158,11,.4);  color: #fbbf24; }
+  .pill-purple { background: rgba(168,85,247,.12);  border-color: rgba(168,85,247,.4);  color: #c084fc; }
+  .pill-rose   { background: rgba(244,63,94,.12);   border-color: rgba(244,63,94,.4);   color: #fb7185; }
+  .pill-indigo { background: rgba(99,102,241,.12);  border-color: rgba(99,102,241,.4);  color: var(--accent2); }
+
+  /* ── Feature grid ────────────────────────────────── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .feature-card {
+    background: var(--ink-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: border-color .2s;
+  }
+  .feature-card:hover { border-color: rgba(99,102,241,.5); }
+  .feature-card .fc-icon { font-size: 28px; margin-bottom: 12px; }
+  .feature-card .fc-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .feature-card .fc-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* ── Two-col ─────────────────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 28px 0; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── Decision card ───────────────────────────────── */
+  .decision-card {
+    background: var(--ink-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin: 16px 0;
+  }
+  .decision-card .dc-q { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+  .decision-card .dc-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .dc-chosen { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25); color: #86efac; }
+  .dc-rejected { background: rgba(244,63,94,.06); border: 1px solid rgba(244,63,94,.15); color: var(--muted); }
+  .dc-badge { font-weight: 700; font-size: 10px; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+  .dc-chosen .dc-badge { background: rgba(34,197,94,.2); color: #4ade80; }
+  .dc-rejected .dc-badge { background: rgba(244,63,94,.15); color: #fb7185; }
+
+  /* ── Node spec ───────────────────────────────────── */
+  .node-spec {
+    background: var(--ink-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .node-spec-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .node-spec-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .node-spec-body { padding: 16px 20px; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    gap: 8px 16px;
+    align-items: start;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(46,51,71,.4);
+    font-size: 13px;
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-name { color: #fff; font-weight: 600; font-family: var(--mono); font-size: 12px; }
+  .field-type { color: var(--accent2); font-family: var(--mono); font-size: 11px; }
+  .field-desc { color: var(--muted); }
+
+  /* ── Checklist ───────────────────────────────────── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #c4c8db;
+    border-bottom: 1px solid rgba(46,51,71,.4);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon { flex-shrink: 0; font-size: 14px; margin-top: 2px; }
+
+  /* ── Footer ──────────────────────────────────────── */
+  .footer {
+    margin-top: 80px;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── Print ───────────────────────────────────────── */
+  @media print {
+    body { background: #fff; color: #111; }
+    .diagram-wrap { break-inside: avoid; }
+    section { break-before: page; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ═══════════════════════════════════════════════════ COVER -->
+<div class="cover">
+  <div class="cover-tag">Tredence Studio · AI Agents Engineering</div>
+  <h1>HR Workflow<br><span>Designer</span></h1>
+  <p class="cover-sub">
+    Full Stack Engineering Internship — Case Study Solution Document.
+    A visual drag-and-drop workflow builder for HR processes, architected with React, TypeScript, React Flow, and Zustand.
+  </p>
+  <div class="cover-meta">
+    <div class="meta-card">
+      <div class="label">Candidate</div>
+      <div class="value">Vishal</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Role</div>
+      <div class="value">Full Stack Intern</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Deliverable</div>
+      <div class="value">Functional Prototype</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Stack</div>
+      <div class="value">React · TS · Zustand</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Date</div>
+      <div class="value">April 2026</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Repo</div>
+      <div class="value" style="font-size:12px;">github.com/root-daemon/<br>hr-workflow-designer</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ TOC -->
+<nav class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#s1">Executive Summary</a><span class="page-ref">§1</span></li>
+    <li><a href="#s2">System Architecture</a><span class="page-ref">§2</span></li>
+    <li><a href="#s3">Component Architecture</a><span class="page-ref">§3</span></li>
+    <li><a href="#s4">State Management</a><span class="page-ref">§4</span></li>
+    <li><a href="#s5">Data Flow & User Interactions</a><span class="page-ref">§5</span></li>
+    <li><a href="#s6">Node Type Specifications</a><span class="page-ref">§6</span></li>
+    <li><a href="#s7">Mock API Layer</a><span class="page-ref">§7</span></li>
+    <li><a href="#s8">Simulation Engine</a><span class="page-ref">§8</span></li>
+    <li><a href="#s9">Key Design Decisions</a><span class="page-ref">§9</span></li>
+    <li><a href="#s10">Scalability & Extension Points</a><span class="page-ref">§10</span></li>
+    <li><a href="#s11">Feature Delivery Summary</a><span class="page-ref">§11</span></li>
+    <li><a href="#s12">What I'd Build Next</a><span class="page-ref">§12</span></li>
+  </ol>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════ §1 EXECUTIVE SUMMARY -->
+<section id="s1">
+  <div class="section-label">Section 01</div>
+  <h2 class="section-title">Executive Summary</h2>
+  <p class="section-intro">
+    A working prototype of an HR Workflow Designer, delivered within the 4–6 hour time-box. The application satisfies every mandatory requirement and implements four of the six bonus features.
+  </p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="fc-icon">🎨</div>
+      <div class="fc-title">Visual Canvas</div>
+      <div class="fc-desc">Drag-and-drop React Flow canvas with 5 typed node varieties, live edge connections, and a minimap.</div>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">⚙️</div>
+      <div class="fc-title">Node Config Forms</div>
+      <div class="fc-desc">Per-node dynamic forms with controlled components, validation, and type-safe state propagation via Zustand.</div>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">🔌</div>
+      <div class="fc-title">Mock API Layer</div>
+      <div class="fc-desc">Pure async functions simulating <code>GET /automations</code> and <code>POST /simulate</code> with realistic latency.</div>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">⚗️</div>
+      <div class="fc-title">Simulation Sandbox</div>
+      <div class="fc-desc">Step-by-step animated execution log, graph validation, topological sort, and raw JSON inspector.</div>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">↩️</div>
+      <div class="fc-title">Undo / Redo</div>
+      <div class="fc-desc">50-step snapshot history baked into the Zustand store. Every destructive action is reversible.</div>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">📦</div>
+      <div class="fc-title">Import / Export</div>
+      <div class="fc-desc">Full workflow graph serialisation to JSON — downloadable file or clipboard copy — and importable back in.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §2 SYSTEM ARCHITECTURE -->
+<section id="s2">
+  <div class="section-label">Section 02</div>
+  <h2 class="section-title">System Architecture</h2>
+  <p class="section-intro">
+    The application is a pure client-side SPA. There is no backend — the API layer is simulated with local async functions. This satisfies the "no auth or backend persistence required" constraint while keeping the mock-to-real migration path trivial.
+  </p>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+graph TB
+    subgraph Browser["🌐 Browser — Single Page Application"]
+        subgraph UI["Presentation Layer"]
+            TB[Toolbar]
+            NP[Node Palette]
+            WC[Workflow Canvas]
+            NFP[Node Form Panel]
+            SB[Sandbox Panel]
+        end
+
+        subgraph State["State Layer — Zustand Store"]
+            NS[(nodes)]
+            ES[(edges)]
+            SN[(selectedNodeId)]
+            HX[(history ring)]
+        end
+
+        subgraph Logic["Logic Layer"]
+            TS[Topological Sort]
+            VAL[Graph Validator]
+            SER[Serialiser]
+        end
+
+        subgraph API["Mock API Layer"]
+            GA["getAutomations()"]
+            SW["simulateWorkflow()"]
+            DATA[(MOCK_AUTOMATIONS)]
+        end
+    end
+
+    UI -->|"read / dispatch"| State
+    State -->|"reactive subscribe"| UI
+    SB -->|"serialise"| SER
+    SER --> TS & VAL
+    TS & VAL --> SW
+    SW --> DATA
+    NFP --> GA
+    GA --> DATA
+
+    style Browser fill:#1a1d27,stroke:#2e3347,color:#e2e4ed
+    style UI fill:#21252f,stroke:#2e3347,color:#e2e4ed
+    style State fill:#21252f,stroke:#6366f1,color:#e2e4ed
+    style Logic fill:#21252f,stroke:#2e3347,color:#e2e4ed
+    style API fill:#21252f,stroke:#2e3347,color:#e2e4ed
+    </div>
+    <p class="diagram-caption">Figure 1 — High-level system architecture. All layers run in the browser; no network calls are made.</p>
+  </div>
+
+  <h3>Layer Responsibilities</h3>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Module(s)</th><th>Responsibility</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="pill pill-indigo">Presentation</span></td><td><code>components/**</code></td><td>Render UI, forward events to the store</td></tr>
+      <tr><td><span class="pill pill-purple">State</span></td><td><code>store/workflowStore.ts</code></td><td>Single source of truth for all mutable application state</td></tr>
+      <tr><td><span class="pill pill-blue">Logic</span></td><td><code>api/mockApi.ts</code></td><td>Graph validation, topological sort, step generation</td></tr>
+      <tr><td><span class="pill pill-amber">API</span></td><td><code>api/mockApi.ts</code></td><td>Async contract — swap for real <code>fetch</code> without changing callers</td></tr>
+      <tr><td><span class="pill pill-green">Types</span></td><td><code>types/workflow.ts</code></td><td>Shared TypeScript interfaces referenced by all layers</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §3 COMPONENT ARCHITECTURE -->
+<section id="s3">
+  <div class="section-label">Section 03</div>
+  <h2 class="section-title">Component Architecture</h2>
+  <p class="section-intro">
+    Components are organised by domain, not by type. Each directory owns a single concern: canvas wiring, node rendering, form editing, or sandbox simulation.
+  </p>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+graph TD
+    App["App.tsx<br/><small>Layout orchestrator</small>"]
+
+    App --> Toolbar["Toolbar.tsx<br/><small>undo · redo · import · export · sandbox toggle</small>"]
+    App --> NP["NodePalette.tsx<br/><small>Draggable node type cards</small>"]
+    App --> WC["WorkflowCanvas.tsx<br/><small>ReactFlow wrapper + drop target</small>"]
+    App --> NFP["NodeFormPanel.tsx<br/><small>Dispatches to correct form</small>"]
+    App --> SBP["SandboxPanel.tsx<br/><small>Run · timeline · JSON tab</small>"]
+
+    WC --> SN["StartNode"]
+    WC --> TN["TaskNode"]
+    WC --> AN["ApprovalNode"]
+    WC --> AUN["AutomatedNode"]
+    WC --> EN["EndNode"]
+
+    SN & TN & AN & AUN & EN --> BN["BaseNode.tsx<br/><small>handles · badge · delete btn</small>"]
+
+    NFP --> SF["StartNodeForm"]
+    NFP --> TF["TaskNodeForm"]
+    NFP --> AF["ApprovalNodeForm"]
+    NFP --> AUF["AutomatedNodeForm"]
+    NFP --> EF["EndNodeForm"]
+
+    TF & SF --> KV["KeyValueEditor.tsx<br/><small>Reusable kv-pair list</small>"]
+
+    style App fill:#6366f1,stroke:#4f52e0,color:#fff
+    style BN fill:#21252f,stroke:#6366f1,color:#e2e4ed
+    style KV fill:#21252f,stroke:#6366f1,color:#e2e4ed
+    </div>
+    <p class="diagram-caption">Figure 2 — Component tree. Arrows represent render composition, not data flow.</p>
+  </div>
+
+  <h3>Folder Structure</h3>
+  <pre>src/
+├── api/
+│   └── mockApi.ts            ← async API contract + mock data
+├── components/
+│   ├── canvas/
+│   │   ├── NodePalette.tsx   ← draggable node type list (left sidebar)
+│   │   └── WorkflowCanvas.tsx← ReactFlow + drop handler
+│   ├── forms/
+│   │   ├── NodeFormPanel.tsx ← kind-aware form dispatcher
+│   │   ├── StartNodeForm.tsx
+│   │   ├── TaskNodeForm.tsx
+│   │   ├── ApprovalNodeForm.tsx
+│   │   ├── AutomatedNodeForm.tsx
+│   │   ├── EndNodeForm.tsx
+│   │   └── KeyValueEditor.tsx← shared kv-pair component
+│   ├── nodes/
+│   │   ├── BaseNode.tsx      ← shared node shell
+│   │   ├── StartNode.tsx
+│   │   ├── TaskNode.tsx
+│   │   ├── ApprovalNode.tsx
+│   │   ├── AutomatedNode.tsx
+│   │   ├── EndNode.tsx
+│   │   └── nodeStyles.ts     ← colour / icon registry
+│   ├── sandbox/
+│   │   └── SandboxPanel.tsx  ← simulate + timeline + JSON viewer
+│   └── ui/
+│       └── Toolbar.tsx       ← top bar actions
+├── store/
+│   └── workflowStore.ts      ← Zustand store (all state)
+└── types/
+    └── workflow.ts           ← shared TS interfaces</pre>
+
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <p><strong>Design principle:</strong> every directory is independently deletable. Removing <code>sandbox/</code> does not break canvas or forms. Adding a new node type only touches <code>nodes/</code>, <code>forms/</code>, <code>types/workflow.ts</code>, and one switch in <code>NodeFormPanel</code>.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §4 STATE MANAGEMENT -->
+<section id="s4">
+  <div class="section-label">Section 04</div>
+  <h2 class="section-title">State Management</h2>
+  <p class="section-intro">
+    All mutable application state lives in a single Zustand store. Components subscribe with fine-grained selectors, so a form edit never re-renders the canvas and vice-versa.
+  </p>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+stateDiagram-v2
+    [*] --> Idle : app mounts
+
+    Idle --> NodeAdded     : addNode(kind, position)
+    Idle --> NodeDeleted   : deleteNode(id)
+    Idle --> EdgeConnected : onConnect(connection)
+    Idle --> ConfigEdited  : updateNodeConfig(id, patch)
+    Idle --> NodeSelected  : selectNode(id)
+    Idle --> Undone        : undo()
+    Idle --> Redone        : redo()
+
+    NodeAdded     --> Idle : pushHistory → append node
+    NodeDeleted   --> Idle : pushHistory → filter node + edges
+    EdgeConnected --> Idle : pushHistory → addEdge
+    ConfigEdited  --> Idle : patch node.data.config
+    NodeSelected  --> Idle : set selectedNodeId
+    Undone        --> Idle : restore history[index-1]
+    Redone        --> Idle : restore history[index+1]
+    </div>
+    <p class="diagram-caption">Figure 3 — Zustand store state machine. Every mutating action optionally snapshots history first.</p>
+  </div>
+
+  <h3>Store Shape</h3>
+  <pre>interface WorkflowState {
+  // Core data
+  nodes:          WorkflowNode[]
+  edges:          WorkflowEdge[]
+  selectedNodeId: string | null
+
+  // History (undo/redo)
+  history:        { nodes: WorkflowNode[]; edges: WorkflowEdge[] }[]
+  historyIndex:   number           // pointer into history ring
+
+  // React Flow handlers
+  onNodesChange:  (changes: NodeChange[]) => void
+  onEdgesChange:  (changes: EdgeChange[]) => void
+  onConnect:      (connection: Connection) => void
+
+  // Domain actions
+  addNode:        (kind: NodeKind, position: XYPosition) => void
+  deleteNode:     (id: string) => void
+  deleteEdge:     (id: string) => void
+  updateNodeConfig: (id: string, patch: Partial&lt;NodeConfig&gt;) => void
+  selectNode:     (id: string | null) => void
+  pushHistory:    () => void
+  undo:           () => void
+  redo:           () => void
+
+  // Serialisation
+  exportWorkflow: () => string        // → JSON
+  importWorkflow: (json: string) => void
+}</pre>
+
+  <div class="callout good">
+    <div class="callout-icon">✓</div>
+    <div class="callout-body">
+      <p><strong>Undo / Redo implementation:</strong> <code>pushHistory()</code> deep-clones the current <code>{ nodes, edges }</code> before every mutating action. The ring keeps the last 50 snapshots. <code>undo()</code> decrements the pointer and restores; <code>redo()</code> increments it. No external library needed.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §5 DATA FLOW -->
+<section id="s5">
+  <div class="section-label">Section 05</div>
+  <h2 class="section-title">Data Flow & User Interactions</h2>
+  <p class="section-intro">
+    Two primary interaction flows cover the full lifecycle of a workflow: authoring (drag → configure → connect) and testing (simulate → inspect).
+  </p>
+
+  <h3>Authoring Flow</h3>
+  <div class="diagram-wrap">
+    <div class="mermaid">
+sequenceDiagram
+    actor HR as HR Admin
+    participant NP as NodePalette
+    participant WC as WorkflowCanvas
+    participant ZS as Zustand Store
+    participant NFP as NodeFormPanel
+
+    HR->>NP: drag node card
+    NP->>WC: HTML5 dragstart (kind)
+    HR->>WC: drop on canvas
+    WC->>WC: screenToFlowPosition(x,y)
+    WC->>ZS: addNode(kind, position)
+    ZS->>ZS: pushHistory()
+    ZS->>ZS: append WorkflowNode
+    ZS-->>WC: nodes[] updated
+    WC-->>HR: node appears on canvas
+
+    HR->>WC: click node
+    WC->>ZS: selectNode(id)
+    ZS-->>NFP: selectedNodeId changes
+    NFP-->>HR: config form opens (right panel)
+
+    HR->>NFP: edit fields
+    NFP->>ZS: updateNodeConfig(id, patch)
+    ZS-->>WC: node re-renders with new data
+
+    HR->>WC: drag source handle → target handle
+    WC->>ZS: onConnect(connection)
+    ZS->>ZS: pushHistory()
+    ZS->>ZS: addEdge(animated, styled)
+    ZS-->>WC: edge appears
+    </div>
+    <p class="diagram-caption">Figure 4 — Authoring sequence: drag → drop → configure → connect.</p>
+  </div>
+
+  <h3>Simulation Flow</h3>
+  <div class="diagram-wrap">
+    <div class="mermaid">
+sequenceDiagram
+    actor HR as HR Admin
+    participant SB as SandboxPanel
+    participant API as mockApi.ts
+    participant VL as Validator
+    participant TS as TopologicalSort
+
+    HR->>SB: click "Run Simulation"
+    SB->>SB: read nodes + edges from store
+    SB->>API: simulateWorkflow({ nodes, edges })
+
+    API->>VL: check start/end nodes, disconnected nodes
+    alt validation fails
+        VL-->>API: errors[]
+        API-->>SB: { success: false, errors }
+        SB-->>HR: show error list (red callout)
+    else validation passes
+        VL-->>API: ok
+        API->>TS: topologicalSort(nodes, edges)
+        TS-->>API: ordered nodes[]
+        loop each node in order
+            API->>API: generate SimulateStep
+            Note over API: durationMs = rand(200-1000)<br/>status = weighted random
+        end
+        API-->>SB: { success, steps[], totalDurationMs }
+        SB->>SB: animate steps sequentially (300ms + 15% of dur)
+        SB-->>HR: step timeline with detail panel
+    end
+    </div>
+    <p class="diagram-caption">Figure 5 — Simulation sequence: validate → sort → generate steps → animate.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §6 NODE TYPES -->
+<section id="s6">
+  <div class="section-label">Section 06</div>
+  <h2 class="section-title">Node Type Specifications</h2>
+  <p class="section-intro">
+    Five node types cover the complete HR workflow lifecycle. Each has a unique visual identity, config shape, and set of constraints.
+  </p>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+graph LR
+    S["▶ START<br/><small>entry point</small>"]
+    T["✓ TASK<br/><small>human action</small>"]
+    A["◆ APPROVAL<br/><small>manager gate</small>"]
+    AU["⚡ AUTOMATED<br/><small>system action</small>"]
+    E["■ END<br/><small>completion</small>"]
+
+    S -->|"connects to"| T
+    S -->|"or directly"| A
+    T -->|"forwards to"| A
+    T -->|"or"| AU
+    A -->|"approved"| T
+    A -->|"or"| AU
+    AU -->|"done"| T
+    AU -->|"or"| E
+    T -->|"final task"| E
+    A -->|"final approval"| E
+
+    style S fill:#14532d,stroke:#22c55e,color:#86efac
+    style T fill:#1e3a5f,stroke:#3b82f6,color:#93c5fd
+    style A fill:#451a03,stroke:#f59e0b,color:#fcd34d
+    style AU fill:#3b0764,stroke:#a855f7,color:#d8b4fe
+    style E fill:#4c0519,stroke:#f43f5e,color:#fda4af
+    </div>
+    <p class="diagram-caption">Figure 6 — Node type connection topology. Any node can connect to any other (except Start has no target, End has no source).</p>
+  </div>
+
+  <!-- Start Node -->
+  <div class="node-spec">
+    <div class="node-spec-header" style="background: rgba(34,197,94,0.08); border-bottom-color: rgba(34,197,94,0.2);">
+      <div class="node-spec-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">▶</div>
+      <div>
+        <div style="font-weight:700;color:#4ade80;">Start Node</div>
+        <div style="font-size:12px;color:var(--muted);">type: <code>start</code> · No target handle · One per workflow</div>
+      </div>
+      <span class="pill pill-green" style="margin-left:auto;">Entry</span>
+    </div>
+    <div class="node-spec-body">
+      <div class="field-row"><span class="field-name">title</span><span class="field-type">string</span><span class="field-desc">Human-readable workflow name</span></div>
+      <div class="field-row"><span class="field-name">metadata</span><span class="field-type">KeyValue[]</span><span class="field-desc">Arbitrary key-value pairs for workflow context (e.g. <code>department: HR</code>)</span></div>
+    </div>
+  </div>
+
+  <!-- Task Node -->
+  <div class="node-spec">
+    <div class="node-spec-header" style="background: rgba(59,130,246,0.08); border-bottom-color: rgba(59,130,246,0.2);">
+      <div class="node-spec-icon" style="background: rgba(59,130,246,0.15); color: #60a5fa;">✓</div>
+      <div>
+        <div style="font-weight:700;color:#60a5fa;">Task Node</div>
+        <div style="font-size:12px;color:var(--muted);">type: <code>task</code> · Represents a human action to be completed</div>
+      </div>
+      <span class="pill pill-blue" style="margin-left:auto;">Human Task</span>
+    </div>
+    <div class="node-spec-body">
+      <div class="field-row"><span class="field-name">title</span><span class="field-type">string *</span><span class="field-desc">Required. Task name shown on node and in simulation</span></div>
+      <div class="field-row"><span class="field-name">description</span><span class="field-type">string</span><span class="field-desc">Detailed instructions for the assignee</span></div>
+      <div class="field-row"><span class="field-name">assignee</span><span class="field-type">string</span><span class="field-desc">Name or email of responsible person</span></div>
+      <div class="field-row"><span class="field-name">dueDate</span><span class="field-type">string</span><span class="field-desc">ISO date string shown on the node card</span></div>
+      <div class="field-row"><span class="field-name">customFields</span><span class="field-type">KeyValue[]</span><span class="field-desc">Extensible fields (e.g. <code>priority: High</code>)</span></div>
+    </div>
+  </div>
+
+  <!-- Approval Node -->
+  <div class="node-spec">
+    <div class="node-spec-header" style="background: rgba(245,158,11,0.08); border-bottom-color: rgba(245,158,11,0.2);">
+      <div class="node-spec-icon" style="background: rgba(245,158,11,0.15); color: #fbbf24;">◆</div>
+      <div>
+        <div style="font-weight:700;color:#fbbf24;">Approval Node</div>
+        <div style="font-size:12px;color:var(--muted);">type: <code>approval</code> · Blocks until a role-holder approves</div>
+      </div>
+      <span class="pill pill-amber" style="margin-left:auto;">Gate</span>
+    </div>
+    <div class="node-spec-body">
+      <div class="field-row"><span class="field-name">title</span><span class="field-type">string</span><span class="field-desc">Approval step label</span></div>
+      <div class="field-row"><span class="field-name">approverRole</span><span class="field-type">enum</span><span class="field-desc">Manager · HRBP · Director · VP · C-Suite · Legal</span></div>
+      <div class="field-row"><span class="field-name">autoApproveThreshold</span><span class="field-type">number</span><span class="field-desc">Days before auto-approval triggers. 0 = disabled.</span></div>
+    </div>
+  </div>
+
+  <!-- Automated Node -->
+  <div class="node-spec">
+    <div class="node-spec-header" style="background: rgba(168,85,247,0.08); border-bottom-color: rgba(168,85,247,0.2);">
+      <div class="node-spec-icon" style="background: rgba(168,85,247,0.15); color: #c084fc;">⚡</div>
+      <div>
+        <div style="font-weight:700;color:#c084fc;">Automated Step Node</div>
+        <div style="font-size:12px;color:var(--muted);">type: <code>automated</code> · System-triggered action fetched from API</div>
+      </div>
+      <span class="pill pill-purple" style="margin-left:auto;">System</span>
+    </div>
+    <div class="node-spec-body">
+      <div class="field-row"><span class="field-name">title</span><span class="field-type">string</span><span class="field-desc">Step label shown on node</span></div>
+      <div class="field-row"><span class="field-name">actionId</span><span class="field-type">string</span><span class="field-desc">ID from <code>GET /automations</code> (e.g. <code>send_email</code>)</span></div>
+      <div class="field-row"><span class="field-name">actionParams</span><span class="field-type">Record&lt;string,string&gt;</span><span class="field-desc">Dynamic fields keyed by <code>action.params[]</code> — rendered at runtime from API response</span></div>
+    </div>
+  </div>
+
+  <!-- End Node -->
+  <div class="node-spec">
+    <div class="node-spec-header" style="background: rgba(244,63,94,0.08); border-bottom-color: rgba(244,63,94,0.2);">
+      <div class="node-spec-icon" style="background: rgba(244,63,94,0.15); color: #fb7185;">■</div>
+      <div>
+        <div style="font-weight:700;color:#fb7185;">End Node</div>
+        <div style="font-size:12px;color:var(--muted);">type: <code>end</code> · No source handle · Terminal state</div>
+      </div>
+      <span class="pill pill-rose" style="margin-left:auto;">Terminal</span>
+    </div>
+    <div class="node-spec-body">
+      <div class="field-row"><span class="field-name">endMessage</span><span class="field-type">string</span><span class="field-desc">Completion message shown in summary</span></div>
+      <div class="field-row"><span class="field-name">summaryFlag</span><span class="field-type">boolean</span><span class="field-desc">Toggle — whether to compile a workflow execution summary report</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §7 MOCK API -->
+<section id="s7">
+  <div class="section-label">Section 07</div>
+  <h2 class="section-title">Mock API Layer</h2>
+  <p class="section-intro">
+    The API contract is expressed as typed async functions in <code>src/api/mockApi.ts</code>. They introduce realistic latency via <code>setTimeout</code> and return data that matches the shapes the case study specifies. Swapping them for real <code>fetch</code> calls requires zero changes to call sites.
+  </p>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+graph LR
+    subgraph Callers
+        ANF["AutomatedNodeForm.tsx"]
+        SBP["SandboxPanel.tsx"]
+    end
+
+    subgraph API["src/api/mockApi.ts"]
+        GA["getAutomations()\n→ delay(300ms)"]
+        SW["simulateWorkflow(req)\n→ delay(800ms)"]
+        DATA[("MOCK_AUTOMATIONS\n(static array)")]
+        TOPO["topologicalSort()"]
+        VAL2["validateGraph()"]
+    end
+
+    ANF -->|"on mount"| GA
+    GA --> DATA
+    DATA -->|"AutomationAction[]"| ANF
+
+    SBP -->|"on run click"| SW
+    SW --> VAL2
+    VAL2 -->|"errors[]"| SW
+    SW --> TOPO
+    TOPO -->|"ordered nodes"| SW
+    SW -->|"SimulateResult"| SBP
+
+    style API fill:#21252f,stroke:#6366f1,color:#e2e4ed
+    style Callers fill:#1a1d27,stroke:#2e3347,color:#e2e4ed
+    </div>
+    <p class="diagram-caption">Figure 7 — API layer call graph. Both endpoints are pure functions with no side effects.</p>
+  </div>
+
+  <h3>Contract — GET /automations</h3>
+  <pre>// Response shape
+interface AutomationAction {
+  id:     string    // "send_email"
+  label:  string    // "Send Email"
+  params: string[]  // ["to", "subject", "body"]
+}
+
+// Mock data (6 actions)
+[
+  { id: "send_email",      label: "Send Email",           params: ["to", "subject", "body"] },
+  { id: "generate_doc",   label: "Generate Document",    params: ["template", "recipient"] },
+  { id: "create_ticket",  label: "Create JIRA Ticket",   params: ["project", "summary", "priority"] },
+  { id: "slack_notify",   label: "Send Slack Message",   params: ["channel", "message"] },
+  { id: "create_account", label: "Create System Account",params: ["username", "role", "department"] },
+  { id: "schedule_meeting",label: "Schedule Meeting",    params: ["attendees", "title", "duration"] },
+]</pre>
+
+  <h3>Contract — POST /simulate</h3>
+  <pre>// Request
+interface SimulateRequest {
+  nodes: WorkflowNode[]
+  edges: WorkflowEdge[]
+}
+
+// Response
+interface SimulateResult {
+  success:        boolean
+  steps:          SimulateStep[]
+  errors:         string[]
+  totalDurationMs: number
+}
+
+interface SimulateStep {
+  nodeId:     string
+  label:      string
+  kind:       NodeKind
+  status:     "success" | "error" | "skipped"
+  message:    string
+  durationMs: number
+}</pre>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <p><strong>Production migration path:</strong> replace the two exported functions in <code>mockApi.ts</code> with <code>fetch('/api/automations')</code> and <code>fetch('/api/simulate', { method: 'POST', body: JSON.stringify(req) })</code>. The rest of the codebase is untouched.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §8 SIMULATION ENGINE -->
+<section id="s8">
+  <div class="section-label">Section 08</div>
+  <h2 class="section-title">Simulation Engine</h2>
+  <p class="section-intro">
+    The simulation runs in three phases: validate the graph structure, sort nodes into execution order via a topological BFS (Kahn's algorithm), then generate a SimulateStep for each node.
+  </p>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    A(["/simulate called"]) --> B
+
+    B{"≥ 1 Start node?"}
+    B -- No --> ERR1["error: missing Start node"]
+    B -- Yes --> C
+
+    C{"≤ 1 Start node?"}
+    C -- No --> ERR2["error: multiple Start nodes"]
+    C -- Yes --> D
+
+    D{"≥ 1 End node?"}
+    D -- No --> ERR3["error: missing End node"]
+    D -- Yes --> E
+
+    E{"Any disconnected\nnodes?"}
+    E -- Yes --> ERR4["error: list disconnected nodes"]
+    E -- No --> F
+
+    ERR1 & ERR2 & ERR3 & ERR4 --> FAIL(["return\n{ success: false, errors }"])
+
+    F["Build adjacency list\n+ in-degree map"] --> G
+    G["Queue ← nodes with in-degree 0"] --> H
+
+    H{"Queue empty?"}
+    H -- No --> I["Dequeue node\nAppend to sorted[]"]
+    I --> J["Decrement in-degree\nof all neighbors"]
+    J --> K{"Any neighbor\nreaches in-degree 0?"}
+    K -- Yes --> L["Enqueue neighbor"] --> H
+    K -- No --> H
+    H -- Yes --> M
+
+    M{"sorted.length\n== nodes.length?"}
+    M -- No --> N["Cycle detected\nFallback: original order"]
+    M -- Yes --> O["Use sorted order"]
+    N & O --> P
+
+    P["For each node:\n• build message string\n• assign random durationMs\n• weighted-random status"] --> Q
+    Q["Sum totalDurationMs"] --> R(["return SimulateResult"])
+
+    style FAIL fill:#4c0519,stroke:#f43f5e,color:#fda4af
+    style R fill:#14532d,stroke:#22c55e,color:#86efac
+    </div>
+    <p class="diagram-caption">Figure 8 — Simulation engine flowchart. Validation runs before sort; cycle detection falls back gracefully.</p>
+  </div>
+
+  <h3>Kahn's Algorithm — Implementation</h3>
+  <pre>function topologicalSort(nodes, edges) {
+  // Build adjacency list and in-degree map
+  const adj      = {}   // nodeId → neighbor ids[]
+  const inDegree = {}   // nodeId → number of incoming edges
+
+  nodes.forEach(n => { adj[n.id] = []; inDegree[n.id] = 0 })
+  edges.forEach(e => { adj[e.source].push(e.target); inDegree[e.target]++ })
+
+  // Start BFS from nodes with no incoming edges
+  const queue  = nodes.filter(n => inDegree[n.id] === 0)
+  const sorted = []
+
+  while (queue.length > 0) {
+    const node = queue.shift()
+    sorted.push(node)
+    for (const neighborId of adj[node.id]) {
+      inDegree[neighborId]--
+      if (inDegree[neighborId] === 0)
+        queue.push(nodes.find(n => n.id === neighborId))
+    }
+  }
+
+  // If a cycle exists, sorted.length < nodes.length → return original order
+  return sorted.length === nodes.length ? sorted : nodes
+}</pre>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §9 DESIGN DECISIONS -->
+<section id="s9">
+  <div class="section-label">Section 09</div>
+  <h2 class="section-title">Key Design Decisions</h2>
+  <p class="section-intro">
+    Each major architectural choice had at least one credible alternative. Here's what was chosen, what was rejected, and why.
+  </p>
+
+  <div class="decision-card">
+    <div class="dc-q">State management library</div>
+    <div class="dc-choice dc-chosen"><span class="dc-badge">CHOSEN</span>Zustand — single flat store, actions co-located, fine-grained selectors, zero boilerplate, built-in snapshot for undo/redo</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>Redux Toolkit — powerful but excessive ceremony for a single-page workflow tool; adds 3× the boilerplate without meaningful benefit at this scale</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>React Context + useReducer — viable, but causes entire subtrees to re-render on any state change unless carefully memoized; Zustand handles this transparently</div>
+  </div>
+
+  <div class="decision-card">
+    <div class="dc-q">API mocking strategy</div>
+    <div class="dc-choice dc-chosen"><span class="dc-badge">CHOSEN</span>Pure async functions in <code>mockApi.ts</code> — zero dependencies, trivially replaceable with real fetch, deterministic, no service worker setup friction</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>MSW (Mock Service Worker) — excellent for integration testing but adds a service worker registration step and complexity that isn't warranted here</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>json-server — requires a separate process, breaking the "single npm run dev" DX requirement</div>
+  </div>
+
+  <div class="decision-card">
+    <div class="dc-q">Node form architecture</div>
+    <div class="dc-choice dc-chosen"><span class="dc-badge">CHOSEN</span>Separate form component per node type (open/closed principle) — NodeFormPanel dispatches on <code>kind</code>; adding a new type adds one file, changes one switch case</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>Single generic form driven by a schema object — fewer files but harder to maintain as field types diverge; toggle vs select vs kv-list don't share a natural base component</div>
+  </div>
+
+  <div class="decision-card">
+    <div class="dc-q">Node style / colour system</div>
+    <div class="dc-choice dc-chosen"><span class="dc-badge">CHOSEN</span>Central <code>nodeStyles.ts</code> registry mapping each <code>NodeKind</code> to gradient / border / icon / badge classes — palette, canvas nodes, and forms all import from one place</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>Inline styles per component — duplicates colour decisions, breaks consistency when a colour changes</div>
+  </div>
+
+  <div class="decision-card">
+    <div class="dc-q">Undo / Redo mechanism</div>
+    <div class="dc-choice dc-chosen"><span class="dc-badge">CHOSEN</span>Deep-clone snapshot ring inside Zustand (50 entries) — straightforward, testable, no dependency on external libraries, works for any state shape</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>use-undoable / immer-with-patches — more memory-efficient (patches vs full snapshots) but adds complexity; 50 snapshots of a typical workflow graph is ≈ 200 kB max</div>
+  </div>
+
+  <div class="decision-card">
+    <div class="dc-q">Styling system</div>
+    <div class="dc-choice dc-chosen"><span class="dc-badge">CHOSEN</span>Tailwind CSS v3 with a custom colour palette defined in <code>tailwind.config.js</code> — semantic tokens (<code>bg-canvas</code>, <code>text-muted</code>) keep components readable</div>
+    <div class="dc-choice dc-rejected"><span class="dc-badge">REJECTED</span>CSS Modules — valid choice but requires context-switching between JS and CSS files; Tailwind keeps everything co-located</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §10 SCALABILITY -->
+<section id="s10">
+  <div class="section-label">Section 10</div>
+  <h2 class="section-title">Scalability & Extension Points</h2>
+  <p class="section-intro">
+    The architecture is designed to grow. Below are the primary extension points and how they'd be exercised in a production context.
+  </p>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+graph LR
+    subgraph Today["Current (prototype)"]
+        MA["mockApi.ts\nasync functions"]
+        ZS2["Zustand\nin-memory"]
+        VT["Vite + React\nSPA"]
+    end
+
+    subgraph Tomorrow["Production (path)"]
+        FA["FastAPI\nbackend"]
+        PG[("PostgreSQL\nworkflow table")]
+        FS[("Firestore\nreal-time")]
+        K8S["Kubernetes\ndeployment"]
+        AUTH["Azure OIDC\nauth"]
+    end
+
+    MA -->|"replace with fetch()"| FA
+    ZS2 -->|"persist to"| PG
+    ZS2 -->|"real-time sync via"| FS
+    VT -->|"containerise"| K8S
+    VT -->|"add"| AUTH
+    FA --> PG & FS
+
+    style Today fill:#21252f,stroke:#2e3347,color:#e2e4ed
+    style Tomorrow fill:#21252f,stroke:#6366f1,color:#e2e4ed
+    </div>
+    <p class="diagram-caption">Figure 9 — Migration path from prototype to production.</p>
+  </div>
+
+  <h3>Adding a New Node Type (3 steps)</h3>
+  <pre>// 1. Add to NodeKind union in types/workflow.ts
+type NodeKind = 'start' | 'task' | 'approval' | 'automated' | 'end' | 'condition'
+
+// 2. Register visual identity in nodeStyles.ts
+NODE_STYLES['condition'] = {
+  gradient: 'from-cyan-500/20 to-cyan-600/10',
+  border:   'border-cyan-500/50',
+  icon:     '?',
+  badge:    'bg-cyan-500/20 text-cyan-400',
+  badgeText: 'CONDITION',
+}
+
+// 3. Create ConditionNode.tsx, ConditionNodeForm.tsx,
+//    add defaultConfig() case, add &lt;ConditionNodeForm /&gt; in NodeFormPanel</pre>
+
+  <div class="two-col">
+    <div>
+      <h4>Performance Considerations</h4>
+      <p style="font-size:13px;">All node components are wrapped in <code>React.memo</code>. React Flow only re-renders nodes whose position or data reference changes. The Zustand selector pattern (<code>s => s.selectedNodeId</code>) means the form panel re-renders in isolation from the canvas on selection changes.</p>
+    </div>
+    <div>
+      <h4>Type Safety</h4>
+      <p style="font-size:13px;">Every node's config is typed as a discriminated union via <code>NodeKind</code>. <code>defaultConfig(kind)</code> uses a <code>satisfies</code> assertion, so the TS compiler verifies each branch returns the correct shape. Adding a field to <code>TaskConfig</code> immediately surfaces in the form.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §11 DELIVERY SUMMARY -->
+<section id="s11">
+  <div class="section-label">Section 11</div>
+  <h2 class="section-title">Feature Delivery Summary</h2>
+  <p class="section-intro">
+    Assessment criteria mapped against delivered implementation.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Requirement</th><th>Status</th><th>Implementation detail</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Drag-and-drop canvas</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>HTML5 drag from palette → <code>screenToFlowPosition</code> → <code>addNode()</code></td>
+      </tr>
+      <tr>
+        <td>5 custom node types</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Start · Task · Approval · Automated · End — each <code>React.memo</code> component</td>
+      </tr>
+      <tr>
+        <td>Connect nodes with edges</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Animated edges via <code>onConnect</code> → Zustand <code>addEdge</code></td>
+      </tr>
+      <tr>
+        <td>Select node to edit</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Click → <code>selectNode(id)</code> → right panel slides in</td>
+      </tr>
+      <tr>
+        <td>Delete nodes / edges</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Node: hover delete btn or form panel button · Edge: click → confirm dialog</td>
+      </tr>
+      <tr>
+        <td>Node configuration forms</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Controlled components, real-time preview on node card, full type safety</td>
+      </tr>
+      <tr>
+        <td>Dynamic AutomatedNode params</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Fetches action list on mount, renders param inputs from <code>action.params[]</code></td>
+      </tr>
+      <tr>
+        <td>Key-value custom fields</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td><code>KeyValueEditor</code> shared between Start and Task forms</td>
+      </tr>
+      <tr>
+        <td>GET /automations</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>6 mock actions, 300 ms artificial latency, loading state shown</td>
+      </tr>
+      <tr>
+        <td>POST /simulate</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Validates → topological sort → generates steps with realistic timing</td>
+      </tr>
+      <tr>
+        <td>Workflow test / sandbox panel</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Slide-up overlay, animated step timeline, detail sidebar, JSON tab</td>
+      </tr>
+      <tr>
+        <td>Graph validation</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Missing Start/End, multiple Start nodes, disconnected nodes — all caught</td>
+      </tr>
+      <tr>
+        <td><em>Bonus:</em> Undo / Redo</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>50-step snapshot ring in Zustand store</td>
+      </tr>
+      <tr>
+        <td><em>Bonus:</em> Export / Import JSON</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Download file + clipboard copy + import from file picker</td>
+      </tr>
+      <tr>
+        <td><em>Bonus:</em> Minimap + Zoom controls</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>React Flow built-ins with dark-theme overrides</td>
+      </tr>
+      <tr>
+        <td><em>Bonus:</em> Auto-validate constraints</td>
+        <td><span class="pill pill-green">✓ Done</span></td>
+        <td>Validated at simulation time with human-readable error messages</td>
+      </tr>
+      <tr>
+        <td><em>Bonus:</em> Node templates</td>
+        <td><span class="pill pill-amber">Not done</span></td>
+        <td>Design is straightforward — predefined node arrays dropped via import flow</td>
+      </tr>
+      <tr>
+        <td><em>Bonus:</em> Auto-layout</td>
+        <td><span class="pill pill-amber">Not done</span></td>
+        <td>Would use Dagre or ELK; not critical within time-box</td>
+      </tr>
+      <tr>
+        <td><em>Bonus:</em> Node version history</td>
+        <td><span class="pill pill-amber">Not done</span></td>
+        <td>Would store per-node config changelog in the store; post time-box feature</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ §12 NEXT STEPS -->
+<section id="s12">
+  <div class="section-label">Section 12</div>
+  <h2 class="section-title">What I'd Build Next</h2>
+  <p class="section-intro">
+    Prioritised by impact and approximate complexity. Items marked with a production tag require a backend.
+  </p>
+
+  <ul class="checklist">
+    <li>
+      <span class="check-icon">🔴</span>
+      <div>
+        <strong style="color:#fff;">Visual validation errors on nodes</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Red outline + tooltip on invalid nodes (e.g. Automated node with no action selected, Task with no title). Surface errors before simulation, not during.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🔴</span>
+      <div>
+        <strong style="color:#fff;">Keyboard shortcuts</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Ctrl+Z / Ctrl+Y for undo/redo (global <code>keydown</code> listener → store actions), Ctrl+D to duplicate a node, Del to delete selected node without hover.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🟠</span>
+      <div>
+        <strong style="color:#fff;">localStorage autosave</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Persist workflow state on every store mutation with a Zustand middleware. Restore on page load with a "continue editing" banner. Zero backend required.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🟠</span>
+      <div>
+        <strong style="color:#fff;">Workflow templates</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Pre-built JSON payloads for Onboarding, Leave Approval, and Document Verification — loaded via the existing <code>importWorkflow()</code> path.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🟡</span>
+      <div>
+        <strong style="color:#fff;">Dagre auto-layout</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Single button to re-layout the graph using <code>dagre</code>. Critical for imported workflows with random positions. React Flow's <code>setNodes</code> accepts new positions directly.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🟡</span>
+      <div>
+        <strong style="color:#fff;">Playwright E2E test suite</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Cover: drag-drop a node, configure it, connect two nodes, run simulation, check step count, export JSON, import it back. Verifies the golden path stays green.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🔵</span>
+      <div>
+        <strong style="color:#fff;"><span class="pill pill-indigo" style="margin-right:6px;">Backend</span>FastAPI persistence</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Swap <code>mockApi.ts</code> for real endpoints. Store workflows in PostgreSQL (<code>workflow</code> table with JSONB <code>graph</code> column). Add versioning via <code>workflow_versions</code>.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🔵</span>
+      <div>
+        <strong style="color:#fff;"><span class="pill pill-indigo" style="margin-right:6px;">Backend</span>Azure OIDC authentication</strong><br>
+        <span style="font-size:13px;color:var(--muted);">Add <code>msal-react</code> for Azure AD login. Pass JWT in Authorization header. Scope workflows to authenticated tenants. Role-based node visibility (e.g. C-Suite approval only for Directors+).</span>
+      </div>
+    </li>
+    <li>
+      <span class="check-icon">🔵</span>
+      <div>
+        <strong style="color:#fff;"><span class="pill pill-indigo" style="margin-right:6px;">Backend</span>Real-time collaborative editing</strong><br>
+        <span style="font-size:13px;color:var(--muted);">WebSocket or Firestore-backed live sync — multiple HR admins see each other's edits. Conflict resolution via operational transforms or CRDT (Y.js).</span>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════ FOOTER -->
+<footer class="footer">
+  <div>
+    <strong style="color:#fff;">HR Workflow Designer</strong> — Tredence Studio Internship Case Study
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span>React · TypeScript · React Flow · Zustand · Tailwind CSS</span>
+    <span>·</span>
+    <a href="https://github.com/root-daemon/hr-workflow-designer" style="color:var(--accent2);text-decoration:none;">github.com/root-daemon/hr-workflow-designer</a>
+  </div>
+</footer>
+
+</div><!-- .page -->
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor:        '#6366f1',
+      primaryTextColor:    '#e2e4ed',
+      primaryBorderColor:  '#4f52e0',
+      lineColor:           '#6366f1',
+      secondaryColor:      '#21252f',
+      tertiaryColor:       '#1a1d27',
+      background:          '#0f1117',
+      mainBkg:             '#21252f',
+      nodeBorder:          '#2e3347',
+      clusterBkg:          '#1a1d27',
+      clusterBorder:       '#2e3347',
+      titleColor:          '#e2e4ed',
+      edgeLabelBackground: '#1a1d27',
+      attributeBackgroundColorEven: '#21252f',
+      attributeBackgroundColorOdd:  '#1a1d27',
+      sequenceNumberColor: '#e2e4ed',
+      actorBkg:            '#21252f',
+      actorBorder:         '#6366f1',
+      actorTextColor:      '#e2e4ed',
+      actorLineColor:      '#2e3347',
+      signalColor:         '#6366f1',
+      signalTextColor:     '#e2e4ed',
+      labelBoxBkgColor:    '#21252f',
+      labelBoxBorderColor: '#2e3347',
+      labelTextColor:      '#e2e4ed',
+      loopTextColor:       '#e2e4ed',
+      noteBorderColor:     '#2e3347',
+      noteBkgColor:        '#21252f',
+      noteTextColor:       '#e2e4ed',
+      activationBorderColor: '#6366f1',
+      activationBkgColor:  '#21252f',
+      fontFamily: 'Segoe UI, system-ui, -apple-system, sans-serif',
+      fontSize: '14px',
+    },
+    flowchart: { curve: 'basis', padding: 20 },
+    sequence:  { actorMargin: 60, width: 160 },
+    securityLevel: 'loose',
+  })
+</script>
+</body>
+</html>
